@@ -120,7 +120,7 @@ class postgresql::server::initdb {
       owner   => $user,
       group   => $group,
       mode    => '0644',
-      requires => Exec['postgresql_initdb'],
+      require => Exec['postgresql_initdb'],
     }
     
     # The package will take care of this for us the first time, but if we
