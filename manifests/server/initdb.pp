@@ -93,22 +93,12 @@ class postgresql::server::initdb {
       false   => $ic_locale,
       default => "${ic_locale} --data-checksums"
     }
-
-    # Trap door to only allow initdb setup once
-    file { "${datadir}/INITDB_RUN":
-      ensure  => present,
-      content => "INITDB run completed",
-      owner   => $user,
-      group   => $group,
-      mode    => '0644',
-    }
     
-    # Remove the default main db so it can be recreated with the initdb command
+    # Remove the db if exists so it can be recreated with the initdb command
     exec { 'remove_main_db':
-      command   => "/bin/rm -Rf ${datadir}/*; /bin/ls -la ${datadir}/",
+      command   => "/bin/rm -Rf ${datadir}/*",
       creates   => "${datadir}/INITDB_RUN",
       user      => root,
-      before  => File["${datadir}/INITDB_RUN"],
     }
 
     # This runs the initdb command, we use the existance of the PG_VERSION
@@ -122,6 +112,16 @@ class postgresql::server::initdb {
       require   => [ File[$require_before_initdb], Exec['remove_main_db'] ],
       cwd       => $module_workdir,
     }  
+    
+    # Trap door to only allow initdb setup once
+    file { "${datadir}/INITDB_RUN":
+      ensure  => present,
+      content => "INITDB run completed",
+      owner   => $user,
+      group   => $group,
+      mode    => '0644',
+      requires => Exec['postgresql_initdb'],
+    }
     
     # The package will take care of this for us the first time, but if we
     # ever need to init a new db we need to copy these files explicitly
