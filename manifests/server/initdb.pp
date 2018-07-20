@@ -94,17 +94,28 @@ class postgresql::server::initdb {
       default => "${ic_locale} --data-checksums"
     }
 
-    # This runs the initdb command, we use the existance of the PG_VERSION
+    # Trap door to only allow initdb setup once
+    file { "${datadir}/INITDB_RUN":
+      ensure  => present,
+      content => "INITDB run completed",
+      owner   => $user,
+      group   => $group,
+      mode    => '0644',
+    }
+
+    # This runs the initdb command, we use the existance of the INITDB_RUN
     # file to ensure we don't keep running this command.
     exec { 'postgresql_initdb':
       command   => $initdb_command,
-      creates   => "${datadir}/PG_VERSION",
+      creates   => "${datadir}/INITDB_RUN",
       user      => $user,
       group     => $group,
-      logoutput => on_failure,
+#      logoutput => on_failure,
       require   => File[$require_before_initdb],
+      before  => File["${datadir}/INITDB_RUN"],
       cwd       => $module_workdir,
     }
+    
     # The package will take care of this for us the first time, but if we
     # ever need to init a new db we need to copy these files explicitly
     if $::operatingsystem == 'Debian' or $::operatingsystem == 'Ubuntu' {
