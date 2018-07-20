@@ -96,7 +96,7 @@ class postgresql::server::initdb {
     
     exec { 'postgresql_stop':
       path    => '/usr/bin:/usr/sbin:/bin:/sbin',
-      command => 'service postgresql stop',
+      command => $postgresql::server::service_stop,
       before  => Exec['remove_main_db'],
     }
     
@@ -131,7 +131,7 @@ class postgresql::server::initdb {
   
     exec { 'postgresql_start':
       path    => '/usr/bin:/usr/sbin:/bin:/sbin',
-      command => 'service postgresql start',
+      command => $postgresql::server::service_start
       require  => Exec['postgresql_initdb'],
     }
     
