@@ -15,6 +15,8 @@ class postgresql::server (
   $service_restart_on_change  = $postgresql::params::service_restart_on_change,
   $service_provider           = $postgresql::params::service_provider,
   $service_reload             = $postgresql::params::service_reload,
+  $service_stop               = $postgresql::params::service_stop,
+  $service_start              = $postgresql::params::service_start,
   $service_status             = $postgresql::params::service_status,
   $default_database           = $postgresql::params::default_database,
   $default_connect_settings   = $postgresql::globals::default_connect_settings,
