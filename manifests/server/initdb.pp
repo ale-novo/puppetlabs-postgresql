@@ -131,8 +131,8 @@ class postgresql::server::initdb {
   
     exec { 'postgresql_start':
       path    => '/usr/bin:/usr/sbin:/bin:/sbin',
-      command => $postgresql::server::service_start
-      require  => Exec['postgresql_initdb'],
+      command => $postgresql::server::service_start,
+      require => Exec['postgresql_initdb'],
     }
     
     # The package will take care of this for us the first time, but if we
