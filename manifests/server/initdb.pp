@@ -94,6 +94,12 @@ class postgresql::server::initdb {
       default => "${ic_locale} --data-checksums"
     }
     
+    exec { 'postgresql_stop':
+      path    => '/usr/bin:/usr/sbin:/bin:/sbin',
+      command => 'service postgresql stop',
+      before  => Exec['remove_main_db'],
+    }
+    
     # Remove the db if exists so it can be recreated with the initdb command
     exec { 'remove_main_db':
       command   => "/bin/rm -Rf ${datadir}/*",
@@ -121,6 +127,12 @@ class postgresql::server::initdb {
       group   => $group,
       mode    => '0644',
       require => Exec['postgresql_initdb'],
+    }
+  
+    exec { 'postgresql_start':
+      path    => '/usr/bin:/usr/sbin:/bin:/sbin',
+      command => 'service postgresql start',
+      require  => Exec['postgresql_initdb'],
     }
     
     # The package will take care of this for us the first time, but if we
