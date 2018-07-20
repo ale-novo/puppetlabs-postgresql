@@ -105,7 +105,7 @@ class postgresql::server::initdb {
     
     # Remove the default main db so it can be recreated with the initdb command
     exec { 'remove_main_db':
-      command   => "/bin/rm -Rf ${datadir}/*",
+      command   => "/bin/rm -Rf ${datadir}/*; /bin/ls -la ${datadir}/",
       creates   => "${datadir}/INITDB_RUN",
       user      => root,
       before  => File["${datadir}/INITDB_RUN"],
