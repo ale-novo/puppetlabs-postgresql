@@ -77,6 +77,9 @@ class postgresql::params inherits postgresql::globals {
 
       $service_status      = $service_status
       $service_reload      = "service ${service_name} reload"
+      $service_stop        = "service ${service_name} stop"
+      $service_start       = "service ${service_name} start"
+
       $perl_package_name   = pick($perl_package_name, 'perl-DBD-Pg')
       $python_package_name = pick($python_package_name, 'python-psycopg2')
 
@@ -117,6 +120,8 @@ class postgresql::params inherits postgresql::globals {
 
       $service_status         = $service_status
       $service_reload         = "systemctl reload ${service_name}"
+      $service_stop           = "systemctl stop ${service_name}"
+      $service_start          = "systemctl start ${service_name}"
       $python_package_name    = pick($python_package_name, 'python-psycopg2')
       # Archlinux does not have a perl::DBD::Pg package
       $perl_package_name      = pick($perl_package_name, 'undef')
@@ -176,6 +181,9 @@ class postgresql::params inherits postgresql::globals {
         $service_status = pick($service_status, "/etc/init.d/${service_name} status | /bin/egrep -q 'Running clusters: .+|online'")
       }
       $service_reload         = "service ${service_name} reload"
+      $service_stop           = "service ${service_name} stop"
+      $service_start          = "service ${service_name} start"
+
       $psql_path              = pick($psql_path, '/usr/bin/psql')
     }
 
@@ -232,6 +240,9 @@ class postgresql::params inherits postgresql::globals {
       $confdir              = pick($confdir, $datadir)
       $service_status       = pick($service_status, "/usr/local/etc/rc.d/${service_name} onestatus")
       $service_reload       = "service ${service_name} reload"
+      $service_stop         = "service ${service_name} stop"
+      $service_start        = "service ${service_name} start"
+
       $psql_path            = pick($psql_path, "${bindir}/psql")
 
       $needs_initdb         = pick($needs_initdb, true)
@@ -256,6 +267,9 @@ class postgresql::params inherits postgresql::globals {
       $confdir              = pick($confdir, $datadir)
       $service_status       = pick($service_status, "/etc/rc.d/${service_name} check")
       $service_reload       = "/etc/rc.d/${service_name} reload"
+      $service_stop         = "/etc/rc.d/${service_name} stop"
+      $service_start        = "/etc/rc.d/${service_name} start"
+
       $psql_path            = pick($psql_path, "${bindir}/psql")
 
       $needs_initdb         = pick($needs_initdb, true)
@@ -282,9 +296,15 @@ class postgresql::params inherits postgresql::globals {
       if $::operatingsystem == 'SLES' and versioncmp($::operatingsystemrelease, '11.4') <= 0 {
         $service_status     = pick($service_status, "/etc/init.d/${service_name} status")
         $service_reload     = "/etc/init.d/${service_name} reload"
+        $service_stop       = "/etc/init.d/${service_name} stop"
+        $service_start      = "/etc/init.d/${service_name} start"
+
       } else {
         $service_status     = pick($service_status, "systemctl status ${service_name}")
         $service_reload     = "systemctl reload ${service_name}"
+        $service_stop       = "systemctl stop ${service_name}"
+        $service_start      = "systemctl start ${service_name}"
+
       }
       $psql_path            = pick($psql_path, "${bindir}/psql")
 
